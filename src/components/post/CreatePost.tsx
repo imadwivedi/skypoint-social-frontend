@@ -34,7 +34,6 @@ const CreatePost: React.FC = () => {
 
         try {
             const result = await createPost({ content: content.trim() }).unwrap();
-            console.log('Post created:', result);
             setContent('');
             setError('');
             // The feed will automatically refresh due to invalidated tags

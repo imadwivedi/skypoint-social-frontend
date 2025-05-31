@@ -32,7 +32,6 @@ const LogoutDialog: React.FC<LogoutDialogProps> = ({ open, onClose }) => {
         try {
             // Call logout API
             const response = await logoutApi().unwrap();
-            console.log('Logout response:', response);
 
             // Parse session duration
             let sessionMessage = 'Thanks for using SkyPoint Social!';

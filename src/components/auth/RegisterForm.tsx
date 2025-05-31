@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Card,
@@ -13,7 +13,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useRegisterMutation, useOauthLoginMutation } from 'services/api';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAuth } from 'hooks';
 import { setCredentials } from 'store/authSlice';
 import { isValidEmail } from 'utils/helpers';
 import { User, OAuthLoginRequest } from 'types';
@@ -21,6 +21,8 @@ import { User, OAuthLoginRequest } from 'types';
 const RegisterForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { token: authToken, user: authUser } = useAuth();
+
     const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
     const [oauthLogin, { isLoading: isOauthLoading }] = useOauthLoginMutation();
 
@@ -34,6 +36,12 @@ const RegisterForm: React.FC = () => {
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [apiError, setApiError] = useState<string>('');
+
+    useEffect(() => {
+        if (authToken && authUser) {
+            navigate('/', { replace: true });
+        }
+    }, [authToken, authUser, navigate]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -119,6 +127,14 @@ const RegisterForm: React.FC = () => {
         console.error('Google Sign-In Failed');
         setApiError('Google Sign-In failed. Please try again.');
     };
+
+    if (authToken && authUser) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -220,7 +236,6 @@ const RegisterForm: React.FC = () => {
                             sx={{ mt: 3, mb: 2, py: 1.5 }}
                             disabled={isRegisterLoading || isOauthLoading}
                         >
-                            {/* Spinner in this button only appears if isRegisterLoading is true */}
                             {isRegisterLoading ? <CircularProgress size={24} /> : 'Sign Up'}
                         </Button>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 import {
     Box,
     Card,
@@ -17,10 +17,13 @@ import { useAppDispatch } from 'hooks';
 import { setCredentials } from 'store/authSlice';
 import { isValidEmail } from 'utils/helpers';
 import { User, OAuthLoginRequest } from 'types';
+import { useAuth } from 'hooks';
 
 const LoginForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { token: authToken, user: authUser } = useAuth(); // Get auth token and user
+
     const [login, { isLoading: isLoginLoading }] = useLoginMutation();
     const [oauthLogin, { isLoading: isOauthLoading }] = useOauthLoginMutation();
 
@@ -30,6 +33,14 @@ const LoginForm: React.FC = () => {
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [apiError, setApiError] = useState<string>('');
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (authToken && authUser) { // Check for both token and user object as a robust check
+            navigate('/', { replace: true });
+        }
+    }, [authToken, authUser, navigate]);
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -109,6 +120,14 @@ const LoginForm: React.FC = () => {
         setApiError('Google Sign-In failed. Please try again.');
     };
 
+    if (authToken && authUser) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <Box
             sx={{
@@ -162,9 +181,8 @@ const LoginForm: React.FC = () => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2, py: 1.5 }}
-                            disabled={isLoginLoading || isOauthLoading} // Disable button if either login is in progress
+                            disabled={isLoginLoading || isOauthLoading}
                         >
-                            {/* Spinner in this button only appears if isLoginLoading is true */}
                             {isLoginLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
                         </Button>
 
@@ -175,7 +193,6 @@ const LoginForm: React.FC = () => {
                         </Divider>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, position: 'relative' }}>
-                            {/* Spinner over Google button only appears if isOauthLoading is true */}
                             {isOauthLoading && (
                                 <CircularProgress
                                     size={24}

@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import {
     Person as PersonIcon,
-    // Group as GroupIcon, // GroupIcon was not used
     CheckCircle as CheckCircleIcon,
     PersonAdd as PersonAddIcon,
 } from '@mui/icons-material';
@@ -173,7 +172,7 @@ const Profile: React.FC = () => {
                                     </Box>
                                     <Box sx={{ textAlign: 'center' }}>
                                         <Typography variant="h5" fontWeight={700}>
-                                            {user.followersCount || 0}
+                                            {user.followerCount || 0}
                                         </Typography>
                                         <Typography variant="body2" sx={{ opacity: 0.8 }}>
                                             Followers

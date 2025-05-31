@@ -16,7 +16,7 @@ import { useLoginMutation, useOauthLoginMutation } from 'services/api';
 import { useAppDispatch } from 'hooks';
 import { setCredentials } from 'store/authSlice';
 import { isValidEmail } from 'utils/helpers';
-import { User, OAuthLoginRequest } from 'types'; // Import OAuthLoginRequest
+import { User, OAuthLoginRequest } from 'types';
 
 const LoginForm: React.FC = () => {
     const navigate = useNavigate();
@@ -96,7 +96,7 @@ const LoginForm: React.FC = () => {
                 if (result.token) localStorage.setItem('token', result.token);
                 sessionStorage.setItem('sessionStartTime', Date.now().toString());
             }
-            navigate('/'); // Navigate to home or dashboard on successful OAuth login
+            navigate('/');
         } catch (error: any) {
             console.error('Google OAuth login error with backend:', error);
             const errorMessage = error.data?.message || error.data?.error || error.data?.errors?.[0]?.description || error.data?.title || error.message || 'Google Sign-In failed. Please try again.';
@@ -162,9 +162,10 @@ const LoginForm: React.FC = () => {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2, py: 1.5 }}
-                            disabled={isLoginLoading || isOauthLoading} // Disable if any loading is active
+                            disabled={isLoginLoading || isOauthLoading} // Disable button if either login is in progress
                         >
-                            {isLoginLoading ? <CircularProgress size={24} /> : 'Sign In'}
+                            {/* Spinner in this button only appears if isLoginLoading is true */}
+                            {isLoginLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
                         </Button>
 
                         <Divider sx={{ my: 2 }}>
@@ -173,9 +174,9 @@ const LoginForm: React.FC = () => {
                             </Typography>
                         </Divider>
 
-                        {/* GoogleLogin component replaces the old button and handleGoogleLogin function */}
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, position: 'relative' }}>
-                            {(isOauthLoading || isLoginLoading) && ( // Show spinner if any auth operation is in progress
+                            {/* Spinner over Google button only appears if isOauthLoading is true */}
+                            {isOauthLoading && (
                                 <CircularProgress
                                     size={24}
                                     sx={{
@@ -191,11 +192,11 @@ const LoginForm: React.FC = () => {
                             <GoogleLogin
                                 onSuccess={handleGoogleSignInResponse}
                                 onError={handleGoogleSignInError}
-                                useOneTap // Optional: for a more seamless experience
+                                useOneTap
                                 theme="outline"
                                 size="large"
                                 shape="rectangular"
-                                width="330px" // Adjust to fit your form
+                                width="330px"
                             />
                         </Box>
 

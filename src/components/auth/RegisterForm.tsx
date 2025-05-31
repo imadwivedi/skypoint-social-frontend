@@ -144,7 +144,6 @@ const RegisterForm: React.FC = () => {
                     )}
 
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-                        {/* ... (TextFields for username, firstName, lastName, email, password, confirmPassword) ... */}
                         <TextField
                             fullWidth
                             label="Username"
@@ -221,6 +220,7 @@ const RegisterForm: React.FC = () => {
                             sx={{ mt: 3, mb: 2, py: 1.5 }}
                             disabled={isRegisterLoading || isOauthLoading}
                         >
+                            {/* Spinner in this button only appears if isRegisterLoading is true */}
                             {isRegisterLoading ? <CircularProgress size={24} /> : 'Sign Up'}
                         </Button>
 
@@ -230,9 +230,8 @@ const RegisterForm: React.FC = () => {
                             </Typography>
                         </Divider>
 
-                        {/* Ensure this is the ONLY Google login button/component */}
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, position: 'relative' }}>
-                            {(isOauthLoading || isRegisterLoading) && (
+                            {isOauthLoading && (
                                 <CircularProgress
                                     size={24}
                                     sx={{
